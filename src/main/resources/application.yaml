@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/property_booking?createDatabaseIfNotExist=true&serverTimezone=UTC}
+    username: ${DB_USERNAME:kevin-m}
+    password: ${DB_PASSWORD:104571252ASDqwe!@#$}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+  jackson:
+    default-property-inclusion: non_null
+server:
+  port: ${PORT:8080}
+app:
+  jwt:
+    # Replace with a randomly generated Base64-encoded secret of at least 32 bytes in real deployments.
+    secret: ${JWT_SECRET:VGhpc0lzQURldmVsb3BtZW50U2VjcmV0S2V5VGhhdElzQXRMZWFzdFRoaXJ0eVR3b0J5dGVzIQ==}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
