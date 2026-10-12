@@ -8,10 +8,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class CurrentUserService {
+
     private final UserRepository users;
 
     public CurrentUserService(UserRepository users) {
-        this.users=users;
+        this.users = users;
     }
 
     public Long id(Authentication authentication) {

@@ -13,14 +13,27 @@ import java.util.List;
 
 @RestController @RequestMapping("/api/host")
 public class HostController {
-    private final ListingService listings; private final BookingService bookings; private final CurrentUserService currentUser;
-    public HostController(ListingService listings, BookingService bookings, CurrentUserService currentUser) { this.listings=listings; this.bookings=bookings; this.currentUser=currentUser; }
-    @PostMapping("/listings") @ResponseStatus(HttpStatus.CREATED)
+
+    private final ListingService listings;
+    private final BookingService bookings;
+    private final CurrentUserService currentUser;
+
+    public HostController(ListingService listings, BookingService bookings, CurrentUserService currentUser) {
+        this.listings = listings;
+        this.bookings = bookings;
+        this.currentUser = currentUser;
+    }
+
+    @PostMapping("/listings")
+    @ResponseStatus(HttpStatus.CREATED)
     public ListingResponse create(Authentication auth, @Valid @RequestBody ListingRequest req) {
         return listings.create(currentUser.id(auth), req);
     }
-    @GetMapping("/listings") public Page<ListingResponse> mine(Authentication auth,
-        @RequestParam(defaultValue="0") int page, @RequestParam(defaultValue="20") int size) {
+
+    @GetMapping("/listings")
+    public Page<ListingResponse> mine(Authentication auth,
+        @RequestParam(defaultValue="0") int page,
+        @RequestParam(defaultValue="20") int size) {
         if (page < 0 || size < 1 || size > 100) throw new IllegalArgumentException("page must be >= 0 and size must be 1..100");
         return listings.mine(currentUser.id(auth), page, size);
     }

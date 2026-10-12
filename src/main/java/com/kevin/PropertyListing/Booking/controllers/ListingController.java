@@ -33,6 +33,9 @@ public class ListingController {
         if (page < 0 || size < 1 || size > 100) throw new IllegalArgumentException("page must be >= 0 and size must be 1..100");
         return listings.browse(city, page, size);
     }
+
     @GetMapping("/{id}")
-    public ListingResponse get(@PathVariable Long id) { return listings.getPublic(id); }
+    public ListingResponse get(@PathVariable Long id) {
+        return listings.getPublic(id);
+    }
 }

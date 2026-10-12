@@ -14,24 +14,47 @@ import org.springframework.security.core.AuthenticationException;
 
 @Service
 public class AuthService {
-    private final UserRepository users; private final PasswordEncoder encoder;
-    private final AuthenticationManager authManager; private final JwtService jwt;
+
+    private final UserRepository users;
+    private final PasswordEncoder encoder;
+    private final AuthenticationManager authManager;
+    private final JwtService jwt;
+
     public AuthService(UserRepository users, PasswordEncoder encoder, AuthenticationManager authManager, JwtService jwt) {
-        this.users=users; this.encoder=encoder; this.authManager=authManager; this.jwt=jwt;
+        this.users = users;
+        this.encoder = encoder;
+        this.authManager = authManager;
+        this.jwt = jwt;
     }
+
     public AuthResponse register(RegisterRequest req) {
         if (users.existsByEmailIgnoreCase(req.email())) throw new ResponseStatusException(HttpStatus.CONFLICT, "Email is already registered");
-        AppUser user = users.save(new AppUser(req.name().trim(), req.email().trim().toLowerCase(),
-            encoder.encode(req.password()), req.role()));
+        AppUser user = users.save(
+                new AppUser(req.name().trim(),
+                req.email().trim().toLowerCase(),
+                encoder.encode(req.password()), req.role())
+        );
         return response(user);
     }
+
     public AuthResponse login(LoginRequest req) {
-        try { authManager.authenticate(new UsernamePasswordAuthenticationToken(req.email(), req.password())); }
-        catch (AuthenticationException ex) { throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password"); }
+        try {
+            authManager.authenticate(new UsernamePasswordAuthenticationToken(req.email(), req.password()));
+        } catch (AuthenticationException ex) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid email or password");
+        }
+
         AppUser user = users.findByEmailIgnoreCase(req.email()).orElseThrow();
         return response(user);
     }
+
     private AuthResponse response(AppUser user) {
-        return new AuthResponse(jwt.generate(user.getEmail()), "Bearer", user.getId(), user.getName(), user.getEmail(), user.getRole());
+        return new AuthResponse(jwt.generate(user.getEmail()),
+                "Bearer",
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
 }

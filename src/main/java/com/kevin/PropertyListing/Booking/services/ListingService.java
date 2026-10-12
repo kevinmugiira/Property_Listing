@@ -18,8 +18,8 @@ public class ListingService {
     private final UserRepository users;
 
     public ListingService(PropertyRepository properties, UserRepository users) {
-        this.properties=properties;
-        this.users=users;
+        this.properties = properties;
+        this.users = users;
     }
 
     public Page<ListingResponse> browse(String city, int page, int size) {
@@ -39,7 +39,11 @@ public class ListingService {
         return ListingResponse.from(p);
     }
     public Page<ListingResponse> mine(Long hostId, int page, int size) {
-        return properties.findByHostId(hostId, PageRequest.of(page, size, Sort.by("createdAt").descending())).map(ListingResponse::from);
+        return properties.findByHostId(hostId,
+                PageRequest
+                        .of(page, size, Sort.by("createdAt")
+                                .descending()))
+                                        .map(ListingResponse::from);
     }
 
     @Transactional
